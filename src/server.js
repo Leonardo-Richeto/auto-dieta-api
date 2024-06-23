@@ -6,10 +6,10 @@ const express = require('express')
 const cors = require('cors')
 const app = express()
 
-const migrationsRun = require('./database/sqlite/migrations')
+//const migrationsRun = require('./database/mysql/migrations/index')
 
 const routes = require('./routes')
-migrationsRun()
+//migrationsRun()
 
 app.use(express.json())
 app.use(cors())

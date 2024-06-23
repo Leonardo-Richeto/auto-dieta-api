@@ -1,4 +1,4 @@
-const knex = require('../database/knex')
+const knex = require('../database/knex/index')
 const jwt = require('jsonwebtoken')
 const bcrypt = require('bcryptjs')
 const authConfig = require('../configs/auth')
@@ -23,23 +23,76 @@ class ForgotPasswordController{
 
             const resetUrl = `http://localhost:5173/forgot-password/reset-password/${token}`
 
+            const htmlMail = `
+            <html>
+                <style>
+                    *{
+                        text-align: center;
+                        color: inherit;
+                        font-family: Inter, sans-serif;
+                        font-size: 16px;
+                    }
+            
+                    body{
+                        background: inherit;
+                    }
+            
+                    div{
+                        max-width: 425px;
+                        align-items: center;
+                        margin: auto;
+                        display: block;
+                    }
+            
+                    a{
+                        font-size: 1.1rem;
+                        border-radius: 15px;
+                        border: 1px solid darkgray;
+                        color: #FFFFFF;
+                        background: #2E8B57;
+                        padding: 10 22px;
+                        height: 2.2rem;
+                        box-shadow: 1px 1px 2px 0 gray;
+                        text-decoration: none;
+                    }
+            
+                    .warning{
+                        opacity: 0.5;
+                        font-size: .8rem;
+                    }
+                </style>
+            
+                <head>
+                <title>Auto Dieta</title>
+                </head>
+                <body>
+                    <div>
+                        <h1>Olá, ${user.name}!</h1>
+                        <p>Vamos te ajudar a recuperar o acesso ao seu planejamento</p>
+                        <p>assim você terá seus resultados</p>
+                        <a href="${resetUrl}">Recuperar acesso a dieta!</a>
+                        <p>Atenciosamente,</p>
+                        <p>Equipe AutoDieta</p>
+                        <p class="warning">Caso você não tenha solicitado este email, apenas ignore!</p>
+                    </div>
+                </body>
+            </html>
+            `
+
             const mailOptions = {
                 to: user.email,
-                from: 'leonardo-richeto@hotmail.com',
+                from: 'suporte@autodieta.com.br',
                 subject: 'Redefinição de senha',
-                text: `Você está recebendo isto porque você (ou alguém) solicitou a redefinição da senha da sua conta.\n\n
-                Por favor, clique no seguinte link ou cole no seu navegador para completar o processo:\n\n
-                ${resetUrl}\n\n
-                Se você não solicitou isto, por favor ignore este e-mail e sua senha permanecerá inalterada.\n`
+                html: htmlMail
             }
 
             try {
                 await transporter.sendMail(mailOptions)
                 return response.status(200).json({ message: `Um e-mail de redefinição de senha foi enviado para ${user.email}`})
             } catch (error) {
+                console.log(error)
                 return response.status(500).json({ message: 'Erro ao enviar e-mail..'})
             }
-
     }
 
     async resetPassword(request, response){

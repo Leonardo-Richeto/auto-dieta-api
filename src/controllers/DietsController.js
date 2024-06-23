@@ -8,27 +8,29 @@ class DietsController{
         const dietName = diet.dietName
 
         try {
-            const diet_id = await knex("diets").insert({
-                dietName: dietName,
-                user_id
-            }).returning("diet_id")
-    
-            for(const meal of diet.meals){
-                const mealName = meal.mealName
-                const meal_id =  await knex("meals").insert({
-                    mealName: mealName,
-                    diet_id: diet_id[0].diet_id
-                }).returning("meal_id")
-    
-                for(const food of meal.foods){
-                    const foodsJson = JSON.stringify(food)
-                    await knex("foods").insert({
-                        foods: foodsJson,
-                        meal_id: meal_id[0].meal_id
+            await knex.transaction( async trx => {
+                const diet_id = await trx("diets").insert({
+                    dietName: dietName,
+                    user_id
+                })
+                
+                for(const meal of diet.meals){
+                    const mealName = meal.mealName
+                    const meal_id =  await trx("meals").insert({
+                        mealName: mealName,
+                        diet_id: diet_id
                     })
+                    
+                    for(const food of meal.foods){
+                        const foodsJson = JSON.stringify(food)
+                        await trx("foods").insert({
+                            foods: foodsJson,
+                            meal_id: meal_id
+                        })
+                    }
                 }
-            }
-    
+            })
+
             response.status(200).json()   
         } catch (error) {
             console.log(error)
@@ -70,14 +72,16 @@ class DietsController{
                 .insert({
                     mealName,
                     diet_id
-                })
-                .returning("meal_id"))
+                    })
+                )
 
                 for(const food of foods){
+                    const foodsJson = JSON.stringify(food)
+
                     await trx("foods")
                     .insert({
-                        foods: JSON.stringify(food),
-                        meal_id: newMealId[0].meal_id
+                        foods: foodsJson,
+                        meal_id: newMealId
                     })
             }
         }
@@ -117,19 +121,17 @@ class DietsController{
                     const foods = await knex("foods")
                     .select("foods")
                     .where("meal_id", "=", meal.meal_id)
-    
-                    meal.foods = foods.map(food => JSON.parse(food.foods))
+
+                    meal.foods = foods.map(food => food.foods)
                 }
-    
                 diet.meals = meals
             }
-            
+        
             return response.json(diets)
         } catch (error) {
             console.log(error)
             return response.status(500).json({ message: "Erro ao buscar suas dietas."})
         }
-
     }
 }
 

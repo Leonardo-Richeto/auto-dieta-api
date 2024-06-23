@@ -1,13 +1,30 @@
 const path = require('path')
+require('dotenv').config()
 
 module.exports = {
   development: {
-    client: 'sqlite3',
+    client: 'mysql2',
     connection: {
-      filename: path.resolve(__dirname, "src", "database", "database.db")
+      host: process.env.DB_HOST,
+      user: process.env.DB_USER,
+      password: process.env.DB_PASSWORD,
+      database: process.env.DB_NAME
     },
-    useNullAsDefault: true,
     migrations: {
+      tableName: 'knex_migrations',
+      directory: path.resolve(__dirname, "src", "database", "knex", "migrations")
+    }
+  },
+  production: {
+    client: 'mysql2',
+    connection: {
+      host: process.env.DB_HOST,
+      user: process.env.DB_USER,
+      password: process.env.DB_PASSWORD,
+      database: process.env.DB_NAME
+    },
+    migrations: {
+      tableName: 'knex_migrations',
       directory: path.resolve(__dirname, "src", "database", "knex", "migrations")
     }
   }
