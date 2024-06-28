@@ -1,15 +1,13 @@
 require('dotenv/config')
 require('express-async-errors')
+require('dotenv').config()
 const AppError = require('./utils/AppError')
 const uploadConfig = require('./configs/upload')
 const express = require('express')
 const cors = require('cors')
 const app = express()
 
-//const migrationsRun = require('./database/mysql/migrations/index')
-
 const routes = require('./routes')
-//migrationsRun()
 
 app.use(express.json())
 app.use(cors())
@@ -31,5 +29,7 @@ app.use(( error, request, response, next) => {
     })
 })
 
-const PORT = 3333
-app.listen(PORT, () => console.log(`Server is running on http://localhost:${PORT}`))
+const PORT = process.env.PORT || 3000
+const BASE_URL = process.env.BASE_URL || 'http://localhost'
+
+app.listen(PORT, () => console.log(`Server is running on ${BASE_URL}:${PORT}`))
