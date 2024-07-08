@@ -34,7 +34,7 @@ class DietsController{
             response.status(200).json()   
         } catch (error) {
             console.log(error)
-            response.status(500).json({ message: "Algo deu errado, entre em contato com o suporte!" })
+            response.status(500).json({ message: "Algo deu errado!" })
         }
     }
 
@@ -88,7 +88,7 @@ class DietsController{
     })
         response.status(200).json()
     }catch(error){
-        response.status(500).json({ message: "Algo deu errado, entre em contato com o suporte!"})
+        response.status(500).json({ message: "Algo deu errado!"})
     }
 }
 

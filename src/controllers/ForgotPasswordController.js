@@ -68,7 +68,7 @@ class ForgotPasswordController{
                 <body>
                     <div>
                         <h1>Olá, ${user.name}!</h1>
-                        <p>Vamos te ajudar a recuperar o acesso ao seu planejamento</p>
+                        <p>Vamos te ajudar a recuperar o acesso ao seu planejamento,</p>
                         <p>assim você terá seus resultados</p>
                         <a href="${resetUrl}">Recuperar acesso a dieta!</a>
                         <p>Atenciosamente,</p>
@@ -81,14 +81,14 @@ class ForgotPasswordController{
 
             const mailOptions = {
                 to: user.email,
-                from: 'suporte@autodieta.com.br',
+                from: 'naoresponda@autodieta.com.br',
                 subject: 'Redefinição de senha',
                 html: htmlMail
             }
 
             try {
                 await transporter.sendMail(mailOptions)
-                return response.status(200).json({ message: `Um e-mail de redefinição de senha foi enviado para ${user.email}`})
+                return response.status(200).json({ message: `Um e-mail foi enviado para ${user.email}`})
             } catch (error) {
                 console.log(error)
                 return response.status(500).json({ message: 'Erro ao enviar e-mail..'})
