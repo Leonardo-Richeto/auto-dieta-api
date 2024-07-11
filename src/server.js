@@ -5,10 +5,10 @@ const AppError = require('./utils/AppError')
 const uploadConfig = require('./configs/upload')
 const express = require('express')
 const cors = require('cors')
-const path = require('path')
 const app = express()
 
 const routes = require('./routes')
+const externalUrl = 'https://autodieta.com.br'
 
 app.use(express.json())
 app.use(cors())
@@ -17,10 +17,9 @@ app.use("/files", express.static(uploadConfig.UPLOADS_FOLDER))
 
 app.use(routes)
 
-app.use(express.static(path.join(__dirname, 'build')))
-app.get('*', (request, response) => {
-    response.sendFile(path.resolve(__dirname, 'build', 'index.html'))
-})
+app.get('*', (req, res) => {
+    res.redirect(`${externalUrl}${req.originalUrl}`);
+});
 
 app.use(( error, request, response, next) => {
     if(error instanceof AppError){
