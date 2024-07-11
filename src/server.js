@@ -8,7 +8,7 @@ const cors = require('cors')
 const app = express()
 
 const routes = require('./routes')
-const externalUrl = 'https://autodieta.com.br'
+const externalUrl = 'autodieta.com.br'
 
 app.use(express.json())
 app.use(cors())
@@ -18,7 +18,7 @@ app.use("/files", express.static(uploadConfig.UPLOADS_FOLDER))
 app.use(routes)
 
 app.get('*', (req, res) => {
-    res.redirect(`${externalUrl}${req.originalUrl}`);
+    res.redirect(`${externalUrl}${req.originalUrl}`)
 });
 
 app.use(( error, request, response, next) => {
